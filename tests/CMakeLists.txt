@@ -6,27 +6,14 @@ FetchContent_Declare(
   GIT_TAG        release-1.11.0
 )
 FetchContent_MakeAvailable(googletest)
-#add_library(GTest::GTest INTERFACE IMPORTED)
-#target_link_libraries(GTest::GTest INTERFACE gtest_main)
+
 enable_testing()
-add_executable(multiply_test multiply_test.cpp)
-add_executable(add_test add_test.cpp)
-
-target_link_libraries(multiply_test
- PRIVATE
- GTest::gtest_main
- multiply
-)
-
-target_link_libraries(add_test
-  PRIVATE
-  GTest::gtest_main
-  multiply
-)
 include(GoogleTest)
-gtest_discover_tests(
-  multiply_test
-)
-gtest_discover_tests(
-  add_test
-)
+message(test_deps ${test_deps})
+function(add_test_file TEST_NAME TEST_FILE)
+    add_executable(${TEST_NAME} ${TEST_FILE})
+    target_link_libraries(${TEST_NAME} PRIVATE GTest::gtest_main modern_cpp_examples)
+    gtest_discover_tests(${TEST_NAME})
+endfunction()
+
+add_test_file(1_test 1_test.cpp)
