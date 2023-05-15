@@ -17,3 +17,4 @@ function(add_test_file TEST_NAME TEST_FILE)
 endfunction()
 
 add_test_file(1_test 1_test.cpp)
+add_test_file(2_test 2_test.cpp)
