@@ -1,6 +1,6 @@
 # KW intro task
 ## TODO
-- [ ] Make tests compile into one executable
+- [x] ~~Make tests compile into one executable~~
 ## Topics
 - [x] Deducing types
 - [x] auto
