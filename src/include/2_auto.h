@@ -2,21 +2,21 @@
 struct Outer
 {
     struct Inner {
-        operator int() {
+        operator int() const {
             return 0;
         }
     };
 
-    Inner getInner() { return {}; }
+    Inner getInner() const { return {}; }
 };
 
 struct CheckInner
 {
     bool value;
 
-    CheckInner(Outer::Inner) : value(true) {}
+    CheckInner(Outer::Inner) : value {true} {}
 
-    CheckInner(int a) : value(false) {}
+    CheckInner(int a) : value{false} {}
 
 };
 
