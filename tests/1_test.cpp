@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 #include "1_deducing_types.h"
 
 TEST(C1_deducing_types, ReferenceDeducesValue)
