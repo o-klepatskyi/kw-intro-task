@@ -1,8 +1,10 @@
 
 struct Outer
 {
-    struct Inner {
-        operator int() const {
+    struct Inner
+    {
+        operator int() const
+        {
             return 0;
         }
     };
@@ -20,13 +22,13 @@ struct CheckInner
 
 };
 
-template<typename T, template <class> class Container>
-T autoSum(Container<T>& container)
+template<class Container>
+auto autoSum(const Container& container)
 {
-    T result = 0;
+    auto result {0};
     // here using auto allows us to know nothing about iterator type.
     // we imply that Container is iterable
-    for (auto& i : container)
+    for (const auto& i : container)
     {
         result += i;
     }

@@ -34,18 +34,18 @@ TEST(Item8, NestedBracesCalCtorWithEmptyInitList)
 
 TEST(Item8, TemplateReturnBraceInitCallsCtorWithInitList)
 {
-    ILT obj = bracesReturnConstruct(1, 5.0);
+    ILT obj = bracesReturnConstruct(1.0, 5.0);
     EXPECT_TRUE(obj.initListUsed);
 }
 
 TEST(Item8, TemplateLocalBraceInitCallsCtorWithInitList)
 {
-    ILT obj = bracesLocalConstruct(1, 5.0);
+    ILT obj = bracesLocalConstruct(1.0, 5.0);
     EXPECT_TRUE(obj.initListUsed);
 }
 
 TEST(Item8, TemplateLocalBraceInitCallsCtorWithTwoParams)
 {
-    ILT obj = parensLocalConstruct(1, 5.0);
+    ILT obj = parensLocalConstruct(1.0, 5.0);
     EXPECT_FALSE(obj.initListUsed);
 }

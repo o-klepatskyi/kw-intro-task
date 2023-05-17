@@ -49,9 +49,12 @@ void uref(T&& obj)
 template<typename T>
 void val(T obj)
 {
-    if constexpr(std::is_pointer_v<T>) {
+    if constexpr(std::is_pointer_v<T>)
+    {
         obj->increment();
-    } else {
+    }
+    else
+    {
         obj.increment();
     }
 }
