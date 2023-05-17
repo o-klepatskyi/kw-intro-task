@@ -98,3 +98,27 @@ TEST(Item10, ScopedEnumProhibitsImplicitConversion)
     auto unscopedValue = enumToNumber<static_cast<int>(ScopedEnum::THIRD)>();
     EXPECT_EQ(scopedValue, unscopedValue);
 }
+
+TEST(Item11, DeletedCopyCtorCannotBePassedByValue)
+{
+    const int expected = 5;
+    MovableOnly obj {expected};
+    // won't compile - we need a cast to rvalue
+    // auto value = movableConsumer(obj);
+    
+    // move doesn't move anything, just performs casting to rvalue
+    auto value = movableConsumer(std::move(obj));
+    EXPECT_EQ(expected, value);
+    EXPECT_EQ(0, obj.value);
+}
+
+TEST(Item11, CannotCallDeletedWithNullptr)
+{
+    auto expected {5};
+    auto ptr = std::make_unique<int>(expected);
+    auto val = dereferenceAndRejectNullptr(ptr.get());
+    EXPECT_EQ(expected, val);
+    
+    // would not compile!
+    //dereferenceAndRejectNullptr(nullptr);
+}

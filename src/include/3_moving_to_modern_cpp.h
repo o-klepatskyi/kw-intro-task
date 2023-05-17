@@ -81,3 +81,37 @@ constexpr long long enumToNumber()
 {
     return i;
 };
+
+struct MovableOnly
+{
+    int value = 0;
+
+    MovableOnly() = default;
+    MovableOnly(int a) : value {a} {}
+    MovableOnly(const MovableOnly&) = delete;
+    MovableOnly& operator=(const MovableOnly&) = delete;
+    MovableOnly(MovableOnly&& rhs) noexcept 
+    : value {rhs.value}
+    {
+        rhs.value = 0;
+    }
+    // rule of 5 tells us to define move assign too
+    MovableOnly& operator=(MovableOnly&& rhs) noexcept
+    {
+        value = rhs.value;
+        rhs.value = 0;
+    }
+};
+
+int movableConsumer(MovableOnly obj)
+{
+    return obj.value;
+}
+
+template<typename T>
+constexpr T dereferenceAndRejectNullptr(T* ptr)
+{
+    return *ptr;
+}
+
+void dereferenceAndRejectNullptr(std::nullptr_t) = delete;
