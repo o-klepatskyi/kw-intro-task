@@ -1,6 +1,7 @@
 #pragma once
 #include <initializer_list>
 #include <utility>
+#include <functional>
 
 struct InitializerListTester
 {
@@ -9,7 +10,7 @@ struct InitializerListTester
     InitializerListTester(const InitializerListTester&) = default;
     InitializerListTester& operator=(const InitializerListTester&) = default;
 
-    InitializerListTester(int i, double b) : initListUsed {false} {};
+    InitializerListTester(int, double) : initListUsed {false} {};
     InitializerListTester(std::initializer_list<double>) : initListUsed {true} {};
 };
 
@@ -100,6 +101,7 @@ struct MovableOnly
     {
         value = rhs.value;
         rhs.value = 0;
+        return *this;
     }
 };
 
@@ -115,3 +117,90 @@ constexpr T dereferenceAndRejectNullptr(T* ptr)
 }
 
 void dereferenceAndRejectNullptr(std::nullptr_t) = delete;
+
+struct Base
+{
+    mutable int value = 0;
+    enum : char {
+        BASE_VALUE = 1,
+        DERIVED_VALUE
+    };
+
+    virtual ~Base() {}
+
+    virtual void override()
+    {
+        value = BASE_VALUE;
+    }
+
+    virtual void constQualifier() const
+    {
+        value = BASE_VALUE;
+    }
+
+    virtual void differentParams(int)
+    {
+        value = BASE_VALUE;
+    }
+    virtual void refQualifiers() &
+    {
+        value = BASE_VALUE;
+    }
+    void nonVirtual() const
+    {
+        value = BASE_VALUE;
+    }
+};
+
+struct Derived : public Base
+{
+    // override is commented to compile
+    // but to emphasise we better write it to catch this kinds of errors
+
+    virtual void override() override
+    {
+        value = DERIVED_VALUE;
+    }
+
+    virtual void constQualified() /*override*/
+    {
+        value = DERIVED_VALUE;
+    }
+
+    virtual void differentParams(unsigned int) /*override*/
+    {
+        value = DERIVED_VALUE;
+    }
+
+    virtual void refQualifiers() && /*override*/
+    {
+        value = DERIVED_VALUE;
+    }
+
+    void nonVirtual() const /*override*/
+    {
+        value = DERIVED_VALUE;
+    }
+};
+
+template<typename T, typename Func, typename... Args>
+inline void invokeMemberFunction(T&& obj, Func func, Args&&... args)
+{
+    (obj.*func)(std::forward<Args>(args)...);
+};
+
+template<typename Func, typename... Args>
+inline void invokeBase(Base& obj, Func func, Args&&... args)
+{
+    invokeMemberFunction(std::forward<Base>(obj), func, std::forward<Args>(args)...);
+};
+
+template<typename Func, typename... Args>
+inline void invokeBase(Base&& obj, Func func, Args&&... args)
+{
+    invokeMemberFunction(std::forward<Base>(obj), func, std::forward<Args>(args)...);
+};
+
+// TODO: how to rewrite as function template alias???
+// template<typename Func, typename... Args>
+// using invokeBase = invokeMemberFunction<Base, Func, Args>;

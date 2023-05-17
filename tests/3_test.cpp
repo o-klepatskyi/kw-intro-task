@@ -122,3 +122,53 @@ TEST(Item11, CannotCallDeletedWithNullptr)
     // would not compile!
     //dereferenceAndRejectNullptr(nullptr);
 }
+
+TEST(Item12, InvokeBaseTemplateInvokesCorrectFunction)
+{
+    Base base;
+    Derived derived;
+    invokeBase(base, &Base::override);
+    invokeBase(derived, &Base::override);
+    EXPECT_EQ(base.value, Base::BASE_VALUE);
+    EXPECT_EQ(derived.value, Base::DERIVED_VALUE);
+}
+
+TEST(Item12, FuncIsNotOverridedWithDifferentConstQual)
+{
+    Base base;
+    Derived derived;
+    invokeBase(base, &Base::constQualifier);
+    invokeBase(derived, &Base::constQualifier);
+    EXPECT_EQ(base.value, Base::BASE_VALUE);
+    EXPECT_EQ(derived.value, Base::BASE_VALUE);
+}
+
+TEST(Item12, FuncIsNotOverridedWithDifferentParams)
+{
+    Base base;
+    Derived derived;
+    invokeBase(base, &Base::differentParams, 0);
+    invokeBase(derived, &Base::differentParams, 0);
+    EXPECT_EQ(base.value, Base::BASE_VALUE);
+    EXPECT_EQ(derived.value, Base::BASE_VALUE);
+}
+
+TEST(Item12, FuncIsNotOverridedWithRefQualifiers)
+{
+    Base base;
+    Derived derived;
+    invokeBase(base, &Base::refQualifiers);
+    invokeBase(std::move(derived), &Base::refQualifiers);
+    EXPECT_EQ(base.value, Base::BASE_VALUE);
+    EXPECT_EQ(derived.value, Base::BASE_VALUE);
+}
+
+TEST(Item12, FuncIsNotOverridedIfNotMarkedVirtualInBaseClass)
+{
+    Base base;
+    Derived derived;
+    invokeBase(base, &Base::nonVirtual);
+    invokeBase(std::move(derived), &Base::nonVirtual);
+    EXPECT_EQ(base.value, Base::BASE_VALUE);
+    EXPECT_EQ(derived.value, Base::BASE_VALUE);
+}

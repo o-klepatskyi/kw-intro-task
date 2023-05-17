@@ -18,7 +18,7 @@ struct CheckInner
 
     CheckInner(Outer::Inner) : value {true} {}
 
-    CheckInner(int a) : value{false} {}
+    CheckInner(int) : value{false} {}
 
 };
 
