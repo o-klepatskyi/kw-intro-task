@@ -32,3 +32,14 @@ InitializerListTester bracesLocalConstruct(Ps&&... params)
     InitializerListTester local {std::forward<Ps>(params)...};
     return local;
 };
+
+struct IntCopyer
+{
+    int value;
+    IntCopyer(int i) : value {i} {}
+
+    IntCopyer(int* pi) : value {-1}
+    {
+        if (pi) value = *pi;
+    }
+};
