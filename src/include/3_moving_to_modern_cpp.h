@@ -128,6 +128,7 @@ struct Base
 
     virtual ~Base() {}
 
+    // is named override to show this is a conditional keyword
     virtual void override()
     {
         value = BASE_VALUE;
@@ -204,3 +205,21 @@ inline void invokeBase(Base&& obj, Func func, Args&&... args)
 // TODO: how to rewrite as function template alias???
 // template<typename Func, typename... Args>
 // using invokeBase = invokeMemberFunction<Base, Func, Args>;
+
+template<typename C>
+concept ContiguousContainer = requires(C c) {
+    { std::contiguous_iterator<decltype(std::cbegin(c))> };
+};
+
+auto findCenter(const ContiguousContainer auto& container)
+{
+    // we do not modify the values, so use cbegin/cend
+    auto left = std::cbegin(container);
+    auto right = std::cend(container);
+    while (left < right)
+    {
+        ++left;
+        --right;
+    };
+    return right;
+};

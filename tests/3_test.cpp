@@ -2,6 +2,9 @@
 #include "3_moving_to_modern_cpp.h"
 #include <memory>
 #include <concepts>
+#include <vector>
+#include <array>
+#include <string>
 
 using ILT = InitializerListTester;
 
@@ -171,4 +174,27 @@ TEST(Item12, FuncIsNotOverridedIfNotMarkedVirtualInBaseClass)
     invokeBase(std::move(derived), &Base::nonVirtual);
     EXPECT_EQ(base.value, Base::BASE_VALUE);
     EXPECT_EQ(derived.value, Base::BASE_VALUE);
+}
+
+TEST(Item13, EmptyContainerCenterIsEnd)
+{
+    std::vector<int> container;
+    auto center = findCenter(container);
+    EXPECT_EQ(center, container.cend());
+}
+
+TEST(Item13, FindsCorrectCenterWithOddElements)
+{
+    std::string container {"abcde"};
+    auto center = findCenter(container);
+    auto expected = std::next(std::cbegin(container), container.size() / 2);
+    EXPECT_EQ(center, expected);
+}
+
+TEST(Item13, FindsCorrectCenterWithEvenElements)
+{
+    std::array<int, 6> container {1,2,3,4,5,6};
+    auto center = findCenter(container);
+    auto expected = std::next(std::cbegin(container), container.size() / 2);
+    EXPECT_EQ(center, expected);
 }
