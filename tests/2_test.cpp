@@ -18,7 +18,7 @@ TEST(C2_auto, UsingExplicitlyTypedInitializerIdiom)
     EXPECT_FALSE(CheckInner(i).value); 
 }
 
-TEST(C2_auto, UsingAutoForVectorSum)
+TEST(C2_auto, UsingAutoForIntVectorSum)
 {
     std::vector<int> vec = { 1, 2, 3, 4, 5, -20, -15, -10, 10, 30, 40};
     auto vecSum = autoSum(vec);
@@ -26,10 +26,10 @@ TEST(C2_auto, UsingAutoForVectorSum)
     EXPECT_EQ(actual, vecSum);
 }
 
-TEST(C2_auto, UsingAutoForListSum)
+TEST(C2_auto, UsingAutoForDoubleListSum)
 {
-    std::list<int> lis = { 1, 2, 3, 4, 5, -20, -15, -10, 10, 30, 40};
+    std::list<double> lis = { 1, 2.7, 3, 4, 5.5, -20, -15, -10, 10, 30, 40};
     auto listSum = autoSum(lis);
-    auto actual = std::accumulate(lis.begin(), lis.end(), 0);
+    double actual = std::accumulate(lis.begin(), lis.end(), 0.0);
     EXPECT_EQ(actual, listSum);
 }

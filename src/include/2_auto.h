@@ -1,3 +1,4 @@
+#include <type_traits>
 
 struct Outer
 {
@@ -25,7 +26,7 @@ struct CheckInner
 template<class Container>
 auto autoSum(const Container& container)
 {
-    auto result {0};
+    typename Container::value_type result {0};
     // here using auto allows us to know nothing about iterator type.
     // we imply that Container is iterable
     for (const auto& i : container)
