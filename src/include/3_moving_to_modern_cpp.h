@@ -43,3 +43,41 @@ struct IntCopyer
         if (pi) value = *pi;
     }
 };
+
+typedef int (*TypedefFunctionReturnsInt)();
+using AliasFunctionReturnsInt = int (*)();
+
+template<typename F, typename S>
+struct TwoTemplateParams {};
+
+template<typename F>
+struct OneTemplateParamTypename
+{
+    typedef TwoTemplateParams<F, void> type;
+};
+
+template <typename F>
+using OneTemplateParamAlias = TwoTemplateParams<F, void>;
+
+namespace PollutedNamespace
+{
+    enum UnscopedEnum : char
+    {
+        FIRST = 1,
+        SECOND,
+        THIRD
+    };
+
+    enum class ScopedEnum : int
+    {
+        SECOND = 2,
+        THIRD,
+        FOURTH
+    };
+};
+
+template<long long i>
+constexpr long long enumToNumber()
+{
+    return i;
+};
