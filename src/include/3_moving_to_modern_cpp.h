@@ -2,6 +2,7 @@
 #include <initializer_list>
 #include <utility>
 #include <functional>
+#include <concepts>
 
 struct InitializerListTester
 {
@@ -223,3 +224,24 @@ auto findCenter(const ContiguousContainer auto& container)
     };
     return right;
 };
+
+class CompileTimeWidget
+{
+private:
+    int m_value;
+public:
+    constexpr CompileTimeWidget() : m_value {0} {}
+    constexpr CompileTimeWidget(int x) : m_value {x} {}
+
+    constexpr int get() const noexcept { return m_value; }
+
+    constexpr void set(int x) noexcept { m_value = x; }
+};
+
+template<typename T>
+constexpr auto gcd(T a, T b) {
+    if (b == 0) {
+        return a;
+    }
+    return gcd(b, a % b);
+}

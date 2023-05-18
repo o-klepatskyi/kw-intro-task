@@ -198,3 +198,17 @@ TEST(Item13, FindsCorrectCenterWithEvenElements)
     auto expected = std::next(std::cbegin(container), container.size() / 2);
     EXPECT_EQ(center, expected);
 }
+
+TEST(Item15, CreatesObjectAtCompileTime)
+{
+    constexpr CompileTimeWidget w2 {5};
+    //w2.set(10); <---- const qualifier needed. Why?
+    static_assert(5 == w2.get());
+}
+
+TEST(Item15, DoesCalculationsAtCompileTime)
+{
+    constexpr CompileTimeWidget w { gcd(36, 48) };
+    constexpr auto expected = 12;
+    static_assert(expected == w.get());
+}
