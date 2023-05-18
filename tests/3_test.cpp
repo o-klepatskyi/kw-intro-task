@@ -5,6 +5,10 @@
 #include <vector>
 #include <array>
 #include <string>
+#include <thread>
+#include <chrono>
+#include <future>
+#include <functional>
 
 using ILT = InitializerListTester;
 
@@ -211,4 +215,88 @@ TEST(Item15, DoesCalculationsAtCompileTime)
     constexpr CompileTimeWidget w { gcd(36, 48) };
     constexpr auto expected = 12;
     static_assert(expected == w.get());
+}
+
+TEST(Item16, ReturnsWrongValueWithoutMutex)
+{
+    const int base = 2;
+    const int power = 5;
+    const CashedPower cpower {base, power};
+    const int expected = std::pow(base, power);
+    std::promise<int> firstPromise;
+    std::promise<int> secondPromise;
+
+    std::thread([&firstPromise, &cpower]{
+        int result = cpower.notMultithread1();
+        firstPromise.set_value(result);
+    }).detach();
+
+    std::thread([&secondPromise, &cpower]{
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        int result = cpower.notMultithread1();
+        secondPromise.set_value(result);
+    }).detach();
+
+    int firstResult = firstPromise.get_future().get();
+    int secondResult = secondPromise.get_future().get();
+
+    EXPECT_EQ(cpower.timesComputed(), 1);
+    EXPECT_EQ(firstResult, expected);
+    EXPECT_EQ(secondResult, 0);
+}
+
+TEST(Item16, ComputesTwiceWithoutMutex)
+{
+    const int base = 2;
+    const int power = 5;
+    const CashedPower cpower {base, power};
+    const int expected = std::pow(base, power);
+    std::promise<int> firstPromise;
+    std::promise<int> secondPromise;
+
+    std::thread([&firstPromise, &cpower]{
+        int result = cpower.notMultithread2();
+        firstPromise.set_value(result);
+    }).detach();
+
+    std::thread([&secondPromise, &cpower]{
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        int result = cpower.notMultithread2();
+        secondPromise.set_value(result);
+    }).detach();
+
+    int firstResult = firstPromise.get_future().get();
+    int secondResult = secondPromise.get_future().get();
+
+    EXPECT_EQ(cpower.timesComputed(), 2);
+    EXPECT_EQ(firstResult, expected);
+    EXPECT_EQ(secondResult, expected);
+}
+
+TEST(Item16, WorksCorrectlyWithMutex)
+{
+    const int base = 2;
+    const int power = 5;
+    const CashedPower cpower {base, power};
+    const int expected = std::pow(base, power);
+    std::promise<int> firstPromise;
+    std::promise<int> secondPromise;
+
+    std::thread([&firstPromise, &cpower]{
+        int result = cpower.multithread();
+        firstPromise.set_value(result);
+    }).detach();
+
+    std::thread([&secondPromise, &cpower]{
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        int result = cpower.multithread();
+        secondPromise.set_value(result);
+    }).detach();
+
+    int firstResult = firstPromise.get_future().get();
+    int secondResult = secondPromise.get_future().get();
+
+    EXPECT_EQ(cpower.timesComputed(), 1);
+    EXPECT_EQ(firstResult, expected);
+    EXPECT_EQ(secondResult, expected);
 }

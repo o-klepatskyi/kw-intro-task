@@ -3,6 +3,11 @@
 #include <utility>
 #include <functional>
 #include <concepts>
+#include <atomic>
+#include <cmath>
+#include <thread>
+#include <chrono>
+#include <mutex>
 
 struct InitializerListTester
 {
@@ -245,3 +250,61 @@ constexpr auto gcd(T a, T b) {
     }
     return gcd(b, a % b);
 }
+
+class CashedPower
+{
+private:
+    int m_base;
+    int m_exp;
+    mutable bool m_computed = false;
+    mutable int m_result = 0;
+    mutable std::mutex m_mutex;
+
+    // for testing
+    mutable std::atomic<int> m_timesComputed;
+public:
+    CashedPower(int base = 0, int exp = 0)
+    : m_base {base}, m_exp {exp}
+    {}
+
+    int notMultithread1() const
+    {
+        if (m_computed)
+            return m_result;
+        m_computed = true;
+        m_result = doHeavyComputation();
+        return m_result;
+    }
+
+    int notMultithread2() const
+    {
+        if (m_computed)
+            return m_result;
+        m_result = doHeavyComputation();
+        m_computed = true;
+        return m_result;
+    }
+
+    int multithread() const
+    {
+        std::lock_guard<std::mutex> lg {m_mutex};
+        if (m_computed)
+            return m_result;
+        m_result = doHeavyComputation();
+        m_computed = true;
+        return m_result;
+    }
+
+    int timesComputed() const
+    {
+        return m_timesComputed;
+    }
+
+private:
+    int doHeavyComputation() const
+    {
+        ++m_timesComputed;
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        return std::pow(m_base, m_exp);
+    }
+};
