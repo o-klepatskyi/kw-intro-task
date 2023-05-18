@@ -4,8 +4,8 @@
 ## Topics
 - [x] Deducing types
 - [x] auto
-- [ ] Moving to modern c++
-- [ ] Smart pointers
+- [x] Moving to modern c++
+- [x] Smart pointers
 - [ ] Rvalue References, Move Semantics, and Perfect Forwarding
 - [ ] Lambda expressions
 - [ ] The concurrency API
