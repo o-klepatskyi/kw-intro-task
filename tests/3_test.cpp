@@ -12,69 +12,69 @@
 
 using ILT = InitializerListTester;
 
-TEST(C3_modern_cpp_7, BraceInitializationImplicitConvertsToWiderType)
+TEST(C3_modern_cpp_Item7, BraceInitializationImplicitConvertsToWiderType)
 {
     long long ll {5};
     EXPECT_EQ(5L, ll);
 }
 
-TEST(C3_modern_cpp_7, ParensUsesCtorWithTwoParams)
+TEST(C3_modern_cpp_Item7, ParensUsesCtorWithTwoParams)
 {
     ILT obj (10, 5.0);
     EXPECT_FALSE(obj.initListUsed);
 }
 
-TEST(C3_modern_cpp_7, BracesUsesCtorWithInitList)
+TEST(C3_modern_cpp_Item7, BracesUsesCtorWithInitList)
 {
     ILT obj {10, 5.0};
     EXPECT_TRUE(obj.initListUsed);
 }
 
-TEST(C3_modern_cpp_7, EmptyBracesCallDefaultCtor)
+TEST(C3_modern_cpp_Item7, EmptyBracesCallDefaultCtor)
 {
     ILT obj {};
     EXPECT_FALSE(obj.initListUsed);
 }
 
-TEST(C3_modern_cpp_7, NestedBracesCalCtorWithEmptyInitList)
+TEST(C3_modern_cpp_Item7, NestedBracesCalCtorWithEmptyInitList)
 {
     ILT obj {{}};
     EXPECT_TRUE(obj.initListUsed);
 }
 
-TEST(C3_modern_cpp_7, TemplateReturnBraceInitCallsCtorWithInitList)
+TEST(C3_modern_cpp_Item7, TemplateReturnBraceInitCallsCtorWithInitList)
 {
     ILT obj = bracesReturnConstruct(1.0, 5.0);
     EXPECT_TRUE(obj.initListUsed);
 }
 
-TEST(C3_modern_cpp_7, TemplateLocalBraceInitCallsCtorWithInitList)
+TEST(C3_modern_cpp_Item7, TemplateLocalBraceInitCallsCtorWithInitList)
 {
     ILT obj = bracesLocalConstruct(1.0, 5.0);
     EXPECT_TRUE(obj.initListUsed);
 }
 
-TEST(C3_modern_cpp_7, TemplateLocalBraceInitCallsCtorWithTwoParams)
+TEST(C3_modern_cpp_Item7, TemplateLocalBraceInitCallsCtorWithTwoParams)
 {
     ILT obj = parensLocalConstruct(1.0, 5.0);
     EXPECT_FALSE(obj.initListUsed);
 }
 
-TEST(C3_modern_cpp_8, NULLCallsIntCtor)
+TEST(C3_modern_cpp_Item8, NULLCallsIntCtor)
 {
     IntCopyer obj(NULL);
     // NULL is defined as int, so value is copied
     EXPECT_EQ(obj.value, 0);
 }
 
-TEST(C3_modern_cpp_8, NullptrCallsIntPointerCtor)
+TEST(C3_modern_cpp_Item8, NullptrCallsIntPointerCtor)
 {
     IntCopyer obj(nullptr);
     // nullptr -> int*, thus -1
     EXPECT_EQ(obj.value, -1);
 }
 
-TEST(C3_modern_cpp_8, ValueOfPointerIsCopiedCorrectly)
+TEST(C3_modern_cpp_Item8, ValueOfPointerIsCopiedCorrectly)
 {
     const int expected = 5;
     auto ptr = std::make_unique<int>(expected);
@@ -83,22 +83,22 @@ TEST(C3_modern_cpp_8, ValueOfPointerIsCopiedCorrectly)
     EXPECT_EQ(obj.value, expected);
 }
 
-TEST(C3_modern_cpp_9, FunctionPtrTypedefIsSameAsAlias)
+TEST(C3_modern_cpp_Item9, FunctionPtrTypedefIsSameAsAlias)
 {
     static_assert(std::same_as<TypedefFunctionReturnsInt, AliasFunctionReturnsInt>);
 }
 
-TEST(C3_modern_cpp_9, TypenameClassMemberAndTemplateAliasAreSame)
+TEST(C3_modern_cpp_Item9, TypenameClassMemberAndTemplateAliasAreSame)
 {
     static_assert(std::same_as<OneTemplateParamTypename<int>::type, OneTemplateParamAlias<int>>);
 }
 
-TEST(C3_modern_cpp_10, UnscopedEnumCanBeUsedWithAndWithoutEnumName)
+TEST(C3_modern_cpp_Item10, UnscopedEnumCanBeUsedWithAndWithoutEnumName)
 {
     EXPECT_EQ(PollutedNamespace::FIRST, PollutedNamespace::UnscopedEnum::FIRST);
 }
 
-TEST(C3_modern_cpp_10, ScopedEnumProhibitsImplicitConversion)
+TEST(C3_modern_cpp_Item10, ScopedEnumProhibitsImplicitConversion)
 {
     using namespace PollutedNamespace;
     auto scopedValue = enumToNumber<UnscopedEnum::THIRD>();
@@ -106,7 +106,7 @@ TEST(C3_modern_cpp_10, ScopedEnumProhibitsImplicitConversion)
     EXPECT_EQ(scopedValue, unscopedValue);
 }
 
-TEST(C3_modern_cpp_11, DeletedCopyCtorCannotBePassedByValue)
+TEST(C3_modern_cpp_Item11, DeletedCopyCtorCannotBePassedByValue)
 {
     const int expected = 5;
     MovableOnly obj {expected};
@@ -119,7 +119,7 @@ TEST(C3_modern_cpp_11, DeletedCopyCtorCannotBePassedByValue)
     EXPECT_EQ(0, obj.value);
 }
 
-TEST(C3_modern_cpp_11, CannotCallDeletedWithNullptr)
+TEST(C3_modern_cpp_Item11, CannotCallDeletedWithNullptr)
 {
     auto expected {5};
     auto ptr = std::make_unique<int>(expected);
@@ -130,7 +130,7 @@ TEST(C3_modern_cpp_11, CannotCallDeletedWithNullptr)
     //dereferenceAndRejectNullptr(nullptr);
 }
 
-TEST(C3_modern_cpp_12, InvokeBaseTemplateInvokesCorrectFunction)
+TEST(C3_modern_cpp_Item12, InvokeBaseTemplateInvokesCorrectFunction)
 {
     Base base;
     Derived derived;
@@ -140,7 +140,7 @@ TEST(C3_modern_cpp_12, InvokeBaseTemplateInvokesCorrectFunction)
     EXPECT_EQ(derived.value, Base::DERIVED_VALUE);
 }
 
-TEST(C3_modern_cpp_12, FuncIsNotOverridedWithDifferentConstQual)
+TEST(C3_modern_cpp_Item12, FuncIsNotOverridedWithDifferentConstQual)
 {
     Base base;
     Derived derived;
@@ -150,7 +150,7 @@ TEST(C3_modern_cpp_12, FuncIsNotOverridedWithDifferentConstQual)
     EXPECT_EQ(derived.value, Base::BASE_VALUE);
 }
 
-TEST(C3_modern_cpp_12, FuncIsNotOverridedWithDifferentParams)
+TEST(C3_modern_cpp_Item12, FuncIsNotOverridedWithDifferentParams)
 {
     Base base;
     Derived derived;
@@ -160,7 +160,7 @@ TEST(C3_modern_cpp_12, FuncIsNotOverridedWithDifferentParams)
     EXPECT_EQ(derived.value, Base::BASE_VALUE);
 }
 
-TEST(C3_modern_cpp_12, FuncIsNotOverridedWithRefQualifiers)
+TEST(C3_modern_cpp_Item12, FuncIsNotOverridedWithRefQualifiers)
 {
     Base base;
     Derived derived;
@@ -170,7 +170,7 @@ TEST(C3_modern_cpp_12, FuncIsNotOverridedWithRefQualifiers)
     EXPECT_EQ(derived.value, Base::BASE_VALUE);
 }
 
-TEST(C3_modern_cpp_12, FuncIsNotOverridedIfNotMarkedVirtualInBaseClass)
+TEST(C3_modern_cpp_Item12, FuncIsNotOverridedIfNotMarkedVirtualInBaseClass)
 {
     Base base;
     Derived derived;
@@ -180,14 +180,14 @@ TEST(C3_modern_cpp_12, FuncIsNotOverridedIfNotMarkedVirtualInBaseClass)
     EXPECT_EQ(derived.value, Base::BASE_VALUE);
 }
 
-TEST(C3_modern_cpp_13, EmptyContainerCenterIsEnd)
+TEST(C3_modern_cpp_Item13, EmptyContainerCenterIsEnd)
 {
     std::vector<int> container;
     auto center = findCenter(container);
     EXPECT_EQ(center, container.cend());
 }
 
-TEST(C3_modern_cpp_13, FindsCorrectCenterWithOddElements)
+TEST(C3_modern_cpp_Item13, FindsCorrectCenterWithOddElements)
 {
     std::string container {"abcde"};
     auto center = findCenter(container);
@@ -195,7 +195,7 @@ TEST(C3_modern_cpp_13, FindsCorrectCenterWithOddElements)
     EXPECT_EQ(center, expected);
 }
 
-TEST(C3_modern_cpp_13, FindsCorrectCenterWithEvenElements)
+TEST(C3_modern_cpp_Item13, FindsCorrectCenterWithEvenElements)
 {
     std::array<int, 6> container {1,2,3,4,5,6};
     auto center = findCenter(container);
@@ -203,21 +203,21 @@ TEST(C3_modern_cpp_13, FindsCorrectCenterWithEvenElements)
     EXPECT_EQ(center, expected);
 }
 
-TEST(C3_modern_cpp_15, CreatesObjectAtCompileTime)
+TEST(C3_modern_cpp_Item15, CreatesObjectAtCompileTime)
 {
     constexpr CompileTimeWidget w2 {5};
     //w2.set(10); <---- const qualifier needed. Why?
     static_assert(5 == w2.get());
 }
 
-TEST(C3_modern_cpp_15, DoesCalculationsAtCompileTime)
+TEST(C3_modern_cpp_Item15, DoesCalculationsAtCompileTime)
 {
     constexpr CompileTimeWidget w { gcd(36, 48) };
     constexpr auto expected = 12;
     static_assert(expected == w.get());
 }
 
-TEST(C3_modern_cpp_16, ReturnsWrongValueWithoutMutex)
+TEST(C3_modern_cpp_Item16, ReturnsWrongValueWithoutMutex)
 {
     const int base = 2;
     const int power = 5;
@@ -245,7 +245,7 @@ TEST(C3_modern_cpp_16, ReturnsWrongValueWithoutMutex)
     EXPECT_EQ(secondResult, 0);
 }
 
-TEST(C3_modern_cpp_16, ComputesTwiceWithoutMutex)
+TEST(C3_modern_cpp_Item16, ComputesTwiceWithoutMutex)
 {
     const int base = 2;
     const int power = 5;
@@ -273,7 +273,7 @@ TEST(C3_modern_cpp_16, ComputesTwiceWithoutMutex)
     EXPECT_EQ(secondResult, expected);
 }
 
-TEST(C3_modern_cpp_16, WorksCorrectlyWithMutex)
+TEST(C3_modern_cpp_Item16, WorksCorrectlyWithMutex)
 {
     const int base = 2;
     const int power = 5;
@@ -301,7 +301,7 @@ TEST(C3_modern_cpp_16, WorksCorrectlyWithMutex)
     EXPECT_EQ(secondResult, expected);
 }
 
-TEST(C3_modern_cpp_17, DefinesCopyAssignmentIfCopyCtorIsUserDefined)
+TEST(C3_modern_cpp_Item17, DefinesCopyAssignmentIfCopyCtorIsUserDefined)
 {
     CopyableConstructor c1;
     c1.value = 5; 
@@ -311,7 +311,7 @@ TEST(C3_modern_cpp_17, DefinesCopyAssignmentIfCopyCtorIsUserDefined)
     EXPECT_EQ(c1.value, c2.value);
 }
 
-TEST(C3_modern_cpp_17, DefinesCopyCtorIfCopyAssignmentIsUserDefined)
+TEST(C3_modern_cpp_Item17, DefinesCopyCtorIfCopyAssignmentIsUserDefined)
 {
     CopyableAssignment c1;
     c1.value = 5;
@@ -319,7 +319,7 @@ TEST(C3_modern_cpp_17, DefinesCopyCtorIfCopyAssignmentIsUserDefined)
     EXPECT_EQ(c1.value, c2.value);
 }
 
-TEST(C3_modern_cpp_17, DontDefineMoveAssignmentIfMoveCtorIsDefined)
+TEST(C3_modern_cpp_Item17, DontDefineMoveAssignmentIfMoveCtorIsDefined)
 {
     MovableConstuctor c1;
     MovableConstuctor c2 {std::move(c1)};
@@ -330,7 +330,7 @@ TEST(C3_modern_cpp_17, DontDefineMoveAssignmentIfMoveCtorIsDefined)
     //                         because move ctor is defined
 }
 
-TEST(C3_modern_cpp_17, DontDefineMoveCtorIfMoveAssignmentIsDefined)
+TEST(C3_modern_cpp_Item17, DontDefineMoveCtorIfMoveAssignmentIsDefined)
 {
     MovableAssignment c1, c2;
     // MovableConstuctor c2 {c1}; same story
