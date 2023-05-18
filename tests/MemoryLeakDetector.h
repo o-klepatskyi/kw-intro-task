@@ -4,13 +4,17 @@
 #include <crtdbg.h>
 
 // Class for detecting memory leaks during testing
-class MemoryLeakDetector {
+class MemoryLeakDetector 
+{
+    _CrtMemState _memState;
 public:
-    MemoryLeakDetector() {
+    MemoryLeakDetector()
+    {
         _CrtMemCheckpoint(&_memState);
     }
 
-    ~MemoryLeakDetector() {
+    ~MemoryLeakDetector()
+    {
         _CrtMemState stateNow, stateDiff;
         _CrtMemCheckpoint(&stateNow);
         int diffResult = _CrtMemDifference(&stateDiff, &_memState, &stateNow);
@@ -18,8 +22,8 @@ public:
             reportFailure(stateDiff.lSizes[1]);
     }
 private:
-    static void reportFailure(size_t unfreedBytes) {
+    static void reportFailure(size_t unfreedBytes)
+    {
         FAIL() << "Memory leak of " << unfreedBytes << " byte(s) detected.";
     }
-    _CrtMemState _memState;
 };

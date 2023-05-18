@@ -75,6 +75,12 @@ TEST(LinkedListWithSmartPtrs, CorrectlyErases)
     SmartPtrLinkedList<int> afterPopFront {2,3,4,5};
     list.popFront();
     EXPECT_EQ(list, afterPopFront);
+
+    auto it = list.cbegin();
+    ++it;
+    list.eraseAfter(it);
+    SmartPtrLinkedList<int> afterErase {2,3,5};
+    EXPECT_EQ(list, afterErase);
 }
 
 TEST(LinkedListWithSmartPtrs, VeryBigListCorrectlyDeletes)

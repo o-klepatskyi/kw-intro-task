@@ -1,22 +1,8 @@
 #pragma once
+#include "util.h"
 #include <memory>
 #include <stdexcept>
 #include <initializer_list>
-template<typename T, typename U, bool b>
-struct SelectT
-{
-    using value = T;
-};
-
-template<typename T, typename U>
-struct SelectT<T, U, false>
-{
-    using value = U;
-};
-
-template<typename T, typename U, bool b>
-using Select = SelectT<T, U, b>::value;
-
 
 template<typename T>
 class SmartPtrLinkedList
@@ -30,9 +16,7 @@ class SmartPtrLinkedList
     std::shared_ptr<Node> head;
 public:
     SmartPtrLinkedList() : head(nullptr) {}
-    ~SmartPtrLinkedList() {
-        clear();
-    };
+    ~SmartPtrLinkedList() { clear(); }
 
     SmartPtrLinkedList(std::initializer_list<T> inlist)
     : head(nullptr)
@@ -53,11 +37,11 @@ public:
         return *this;
     }
 
-    SmartPtrLinkedList(SmartPtrLinkedList&& other)
+    SmartPtrLinkedList(SmartPtrLinkedList&& other) noexcept
     : head(std::move(other.head))
     {}
 
-    SmartPtrLinkedList operator=(SmartPtrLinkedList&& other)
+    SmartPtrLinkedList operator=(SmartPtrLinkedList&& other) noexcept
     {
         head = std::move(other.head);
         return *this;
@@ -77,12 +61,13 @@ private:
             cur->next = std::make_shared<Node>(*it, nullptr);
             cur = cur->next;
         }
-    };
+    }
 public:
     inline T& front()        { *begin(); }
     inline T  front() const  { *cbegin(); }
 
     inline bool empty() const noexcept { return !head; }
+
     size_t size() const noexcept
     {
         size_t result = 0;
@@ -95,7 +80,7 @@ public:
     }
 
     inline void clear() noexcept
-    { 
+    {
         while(head != nullptr)
         {
             head = head->next;
@@ -141,17 +126,17 @@ public:
             return *this;
         }
 
-        inline operator bool() { 
-            return !ptr.expired();
-        }
+        inline operator bool() const noexcept { return !ptr.expired(); }
 
         template<bool b>
-        inline bool operator==(const IteratorT<b>& other) const {
+        inline bool operator==(const IteratorT<b>& other) const noexcept
+        {
             return !ptr.owner_before(other.ptr) && !other.ptr.owner_before(ptr);
         }
 
         template<bool b>
-        bool operator !=(const IteratorT<b>& other) const {
+        bool operator !=(const IteratorT<b>& other) const noexcept
+        {
             return !(*this == other);
         }
     };
@@ -166,7 +151,8 @@ public:
     inline ConstIterator    cbegin()const   noexcept { return head; }
     inline ConstIterator    cend()  const   noexcept { return {nullptr};}
 
-    inline Iterator insertAfter(Iterator it, const T& value)
+    template<bool b>
+    inline IteratorT<b> insertAfter(IteratorT<b> it, const T& value)
     {
         auto ptr = it.node();
         auto next = std::make_shared<Node>(value, ptr->next);
@@ -174,7 +160,8 @@ public:
         return ++it;
     }
 
-    inline Iterator insertAfter(Iterator it, T&& value)
+    template<bool b>
+    inline IteratorT<b> insertAfter(IteratorT<b> it, T&& value)
     {
         auto ptr = it.node();
         auto next = std::make_shared<Node>(std::move(value), ptr->next);
@@ -182,20 +169,21 @@ public:
         return ++it;
     }
 
-    inline Iterator eraseAfter(Iterator it)
+    template<bool b>
+    inline IteratorT<b> eraseAfter(IteratorT<b> it)
     {
         auto ptr = it.node();
         ptr->next = ptr->next->next;
         return ++it;
     }
 
-    inline void pushFront(const T& value) 
+    inline void pushFront(const T& value) noexcept
     {
         auto next = std::make_shared<Node>(value, head);
         head = next;
     }
 
-    inline void pushFront(T&& value) 
+    inline void pushFront(T&& value) noexcept
     {
         auto next = std::make_shared<Node>(std::move(value), head);
         head = next;
@@ -222,7 +210,7 @@ bool operator==(const SmartPtrLinkedList<T>& lhs, const SmartPtrLinkedList<T>& r
 };
 
 template<typename T>
-bool operator!=(const SmartPtrLinkedList<T>& lhs, const SmartPtrLinkedList<T>& rhs) noexcept
+inline bool operator!=(const SmartPtrLinkedList<T>& lhs, const SmartPtrLinkedList<T>& rhs) noexcept
 {
     return !(lhs == rhs);
 };
