@@ -6,7 +6,7 @@
 - [x] auto
 - [x] Moving to modern c++
 - [x] Smart pointers
-- [ ] Rvalue References, Move Semantics, and Perfect Forwarding
+- [x] Rvalue References, Move Semantics, and Perfect Forwarding
 - [ ] Lambda expressions
 - [ ] The concurrency API
 - [ ] Tweaks
