@@ -2,7 +2,7 @@
 #include "gtest/gtest.h"
 #include "MemoryLeakDetector.h"
 
-TEST(LinkedListWithSmartPtrs, DefaultCtor)
+TEST(C4_smart_ptrs_LinkedList, DefaultCtor)
 {
     MemoryLeakDetector d;
     SmartPtrLinkedList<int> list;
@@ -10,14 +10,14 @@ TEST(LinkedListWithSmartPtrs, DefaultCtor)
     EXPECT_TRUE(list.empty());
 }
 
-TEST(LinkedListWithSmartPtrs, InitializerListCtor)
+TEST(C4_smart_ptrs_LinkedList, InitializerListCtor)
 {
     MemoryLeakDetector d;
     SmartPtrLinkedList<int> list {1,2,3,4,5};
     EXPECT_EQ(list.size(), 5);
 }
 
-TEST(LinkedListWithSmartPtrs, EmptyListsAreEqual)
+TEST(C4_smart_ptrs_LinkedList, EmptyListsAreEqual)
 {
     MemoryLeakDetector d;
     SmartPtrLinkedList<int> list1;
@@ -25,14 +25,14 @@ TEST(LinkedListWithSmartPtrs, EmptyListsAreEqual)
     EXPECT_EQ(list1, list2);
 }
 
-TEST(LinkedListWithSmartPtrs, ListIsEqualToItself)
+TEST(C4_smart_ptrs_LinkedList, ListIsEqualToItself)
 {
     MemoryLeakDetector d;
     SmartPtrLinkedList<int> list;
     EXPECT_EQ(list, list);
 }
 
-TEST(LinkedListWithSmartPtrs, ChecksForEqualityAndInequality)
+TEST(C4_smart_ptrs_LinkedList, ChecksForEqualityAndInequality)
 {
     MemoryLeakDetector d;
     SmartPtrLinkedList<int> list1 {1,2,3,4,5};
@@ -53,7 +53,7 @@ TEST(LinkedListWithSmartPtrs, ChecksForEqualityAndInequality)
     EXPECT_NE(list4, list5);
 }
 
-TEST(LinkedListWithSmartPtrs, CorrectlyInserts)
+TEST(C4_smart_ptrs_LinkedList, CorrectlyInserts)
 {
     MemoryLeakDetector d;
     SmartPtrLinkedList<int> list;
@@ -68,7 +68,7 @@ TEST(LinkedListWithSmartPtrs, CorrectlyInserts)
     EXPECT_EQ(it, expected);
 }
 
-TEST(LinkedListWithSmartPtrs, CorrectlyErases)
+TEST(C4_smart_ptrs_LinkedList, CorrectlyErases)
 {
     MemoryLeakDetector d;
     SmartPtrLinkedList<int> list {1,2,3,4,5};
@@ -83,7 +83,7 @@ TEST(LinkedListWithSmartPtrs, CorrectlyErases)
     EXPECT_EQ(list, afterErase);
 }
 
-TEST(LinkedListWithSmartPtrs, VeryBigListCorrectlyDeletes)
+TEST(C4_smart_ptrs_LinkedList, VeryBigListCorrectlyDeletes)
 {
     MemoryLeakDetector d;
     SmartPtrLinkedList<int> list;
@@ -92,7 +92,7 @@ TEST(LinkedListWithSmartPtrs, VeryBigListCorrectlyDeletes)
     }
 }
 
-TEST(LinkedListWithSmartPtrs, CorrectlyCopiesAndAssignes)
+TEST(C4_smart_ptrs_LinkedList, CorrectlyCopiesAndAssignes)
 {
     MemoryLeakDetector d;
     SmartPtrLinkedList<int> list1 {2,3,4};
