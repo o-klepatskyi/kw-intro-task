@@ -304,7 +304,47 @@ private:
     int doHeavyComputation() const
     {
         ++m_timesComputed;
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
         return std::pow(m_base, m_exp);
+    }
+};
+
+struct CopyableConstructor
+{
+    int value = 0;
+
+    CopyableConstructor() = default;
+    CopyableConstructor(const CopyableConstructor&)
+    {
+        int doSomething = 42;
+    }
+};
+
+struct CopyableAssignment
+{
+    int value = 0;
+    CopyableAssignment& operator=(const CopyableAssignment&)
+    {
+        int doSomething = 42;
+        return *this;
+    }
+};
+
+struct MovableConstuctor
+{
+    MovableConstuctor() = default;
+
+    MovableConstuctor(MovableConstuctor&&)
+    {
+        int doSomething = 42;
+    }
+};
+
+struct MovableAssignment
+{
+    MovableAssignment& operator=(MovableAssignment&&)
+    {
+        int doSomething = 42;
+        return *this;
     }
 };

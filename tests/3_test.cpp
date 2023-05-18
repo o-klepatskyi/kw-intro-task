@@ -232,7 +232,7 @@ TEST(Item16, ReturnsWrongValueWithoutMutex)
     }).detach();
 
     std::thread([&secondPromise, &cpower]{
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
         int result = cpower.notMultithread1();
         secondPromise.set_value(result);
     }).detach();
@@ -260,7 +260,7 @@ TEST(Item16, ComputesTwiceWithoutMutex)
     }).detach();
 
     std::thread([&secondPromise, &cpower]{
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
         int result = cpower.notMultithread2();
         secondPromise.set_value(result);
     }).detach();
@@ -288,7 +288,7 @@ TEST(Item16, WorksCorrectlyWithMutex)
     }).detach();
 
     std::thread([&secondPromise, &cpower]{
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
         int result = cpower.multithread();
         secondPromise.set_value(result);
     }).detach();
@@ -299,4 +299,45 @@ TEST(Item16, WorksCorrectlyWithMutex)
     EXPECT_EQ(cpower.timesComputed(), 1);
     EXPECT_EQ(firstResult, expected);
     EXPECT_EQ(secondResult, expected);
+}
+
+TEST(Item17, DefinesCopyAssignmentIfCopyCtorIsUserDefined)
+{
+    CopyableConstructor c1;
+    c1.value = 5; 
+    CopyableConstructor c2;
+    EXPECT_NE(c1.value, c2.value);
+    c2 = c1; // generates default copy
+    EXPECT_EQ(c1.value, c2.value);
+}
+
+TEST(Item17, DefinesCopyCtorIfCopyAssignmentIsUserDefined)
+{
+    CopyableAssignment c1;
+    c1.value = 5;
+    CopyableAssignment c2 {c1}; // generates default copy
+    EXPECT_EQ(c1.value, c2.value);
+}
+
+TEST(Item17, DontDefineMoveAssignmentIfMoveCtorIsDefined)
+{
+    MovableConstuctor c1;
+    MovableConstuctor c2 {std::move(c1)};
+    // MovableConstuctor c2 {c1}; copy operations are deleted
+    // c2 = c1;                   if move are defined
+    
+    // c2 = std::move(c1); <-- won't compile
+    //                         because move ctor is defined
+}
+
+TEST(Item17, DontDefineMoveCtorIfMoveAssignmentIsDefined)
+{
+    MovableAssignment c1, c2;
+    // MovableConstuctor c2 {c1}; same story
+    // c2 = c1;                   
+    c2 = std::move(c1);
+    
+   
+    //  MovableAssignment c3 {c2}; <-- won't compile
+    //                                 because move assignment is defined
 }
