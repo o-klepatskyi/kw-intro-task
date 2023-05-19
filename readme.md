@@ -5,8 +5,8 @@
 - [x] Deducing types
 - [x] auto
 - [x] Moving to modern c++
-- [ ] Smart pointers
-- - [ ] Pimpl Idiom
+- [x] Smart pointers
+- - [x] Pimpl Idiom
 - [x] Rvalue References, Move Semantics, and Perfect Forwarding
 - [x] Lambda expressions
 - [ ] The concurrency API

@@ -106,3 +106,18 @@ TEST(C4_smart_ptrs_LinkedList, CorrectlyCopiesAndAssignes)
     EXPECT_EQ(list2, list3);
     EXPECT_TRUE(list1.empty());
 }
+
+TEST(C4_smart_ptrs_Pipml, PimplDoesNotLeaksMemory)
+{
+    MemoryLeakDetector d;
+    MyCollection numbers = {1, 2, 3, 2, 4, 2, 5};
+    MyCollection copy;
+    EXPECT_EQ(numbers.size(), 7);
+    EXPECT_EQ(copy.size(), 0);
+    copy = numbers;
+    EXPECT_EQ(copy.size(), 7);
+    const int numberToRemove = 2;
+    numbers.remove(numberToRemove);
+    EXPECT_EQ(numbers.size(), 4);
+    EXPECT_EQ(copy.size(), 7);
+}

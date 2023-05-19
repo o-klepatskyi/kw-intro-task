@@ -214,3 +214,25 @@ bool operator!=(const SmartPtrLinkedList<T>& lhs, const SmartPtrLinkedList<T>& r
 {
     return !(lhs == rhs);
 };
+
+class MyCollection 
+{
+    struct Impl;
+    std::unique_ptr<Impl> impl_;
+public:
+
+    MyCollection();
+    MyCollection(std::initializer_list<int>);
+    MyCollection(const MyCollection&);
+    MyCollection& operator=(const MyCollection&);
+    MyCollection(MyCollection&&) = default;
+    MyCollection& operator=(MyCollection&&) = default;
+
+    ~MyCollection();
+    
+    void add(int i);
+    void remove(int i);
+    int size() const noexcept;
+};
+
+// std::ostream& operator<<(std::ostream& os, const MyCollection& collection);
