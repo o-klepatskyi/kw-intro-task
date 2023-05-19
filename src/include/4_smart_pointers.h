@@ -15,22 +15,22 @@ class SmartPtrLinkedList
 
     std::shared_ptr<Node> head;
 public:
-    SmartPtrLinkedList() : head(nullptr) {}
-    ~SmartPtrLinkedList() { clear(); }
+    SmartPtrLinkedList() noexcept : head(nullptr) {}
+    ~SmartPtrLinkedList() noexcept { clear(); }
 
-    SmartPtrLinkedList(std::initializer_list<T> inlist)
+    SmartPtrLinkedList(std::initializer_list<T> inlist) noexcept
     : head(nullptr)
     {
         copy(inlist);
     }
 
-    SmartPtrLinkedList(const SmartPtrLinkedList& other)
+    SmartPtrLinkedList(const SmartPtrLinkedList& other) noexcept
     : head(nullptr)
     {
         copy(other);
     }
 
-    SmartPtrLinkedList& operator=(const SmartPtrLinkedList& other)
+    SmartPtrLinkedList& operator=(const SmartPtrLinkedList& other) noexcept
     {
         clear();
         copy(other);
@@ -49,7 +49,7 @@ public:
 
 private:
     template<template <class> class Container>
-    void copy(const Container<T>& other)
+    void copy(const Container<T>& other) noexcept
     {
         if (other.size() == 0) return;
         auto it = other.begin();
@@ -63,10 +63,10 @@ private:
         }
     }
 public:
-    inline T& front()        { *begin(); }
-    inline T  front() const  { *cbegin(); }
+    T& front()        { *begin(); }
+    T  front() const  { *cbegin(); }
 
-    inline bool empty() const noexcept { return !head; }
+    bool empty() const noexcept { return !head; }
 
     size_t size() const noexcept
     {
@@ -79,7 +79,7 @@ public:
         return result;
     }
 
-    inline void clear() noexcept
+    void clear() noexcept
     {
         while(head != nullptr)
         {
@@ -95,7 +95,7 @@ public:
         friend class SmartPtrLinkedList<T>;
         std::weak_ptr<Node> ptr;
 
-        inline auto node() const
+        auto node() const
         {
             auto shptr = ptr.lock();
             if (!shptr) throw bad_iterator{}; 
@@ -126,10 +126,10 @@ public:
             return *this;
         }
 
-        inline operator bool() const noexcept { return !ptr.expired(); }
+        operator bool() const noexcept { return !ptr.expired(); }
 
         template<bool b>
-        inline bool operator==(const IteratorT<b>& other) const noexcept
+        bool operator==(const IteratorT<b>& other) const noexcept
         {
             return !ptr.owner_before(other.ptr) && !other.ptr.owner_before(ptr);
         }
@@ -144,15 +144,15 @@ public:
     using Iterator = IteratorT<false>;
     using ConstIterator = IteratorT<true>;
 
-    inline Iterator         begin()         noexcept { return head; }
-    inline Iterator         end()           noexcept { return {nullptr};}
-    inline ConstIterator    begin() const   noexcept { return head; }
-    inline ConstIterator    end()   const   noexcept { return {nullptr};}
-    inline ConstIterator    cbegin()const   noexcept { return head; }
-    inline ConstIterator    cend()  const   noexcept { return {nullptr};}
+    Iterator         begin()         noexcept { return head; }
+    Iterator         end()           noexcept { return {nullptr};}
+    ConstIterator    begin() const   noexcept { return head; }
+    ConstIterator    end()   const   noexcept { return {nullptr};}
+    ConstIterator    cbegin()const   noexcept { return head; }
+    ConstIterator    cend()  const   noexcept { return {nullptr};}
 
     template<bool b>
-    inline IteratorT<b> insertAfter(IteratorT<b> it, const T& value)
+    IteratorT<b> insertAfter(IteratorT<b> it, const T& value)
     {
         auto ptr = it.node();
         auto next = std::make_shared<Node>(value, ptr->next);
@@ -161,7 +161,7 @@ public:
     }
 
     template<bool b>
-    inline IteratorT<b> insertAfter(IteratorT<b> it, T&& value)
+    IteratorT<b> insertAfter(IteratorT<b> it, T&& value)
     {
         auto ptr = it.node();
         auto next = std::make_shared<Node>(std::move(value), ptr->next);
@@ -170,26 +170,26 @@ public:
     }
 
     template<bool b>
-    inline IteratorT<b> eraseAfter(IteratorT<b> it)
+    IteratorT<b> eraseAfter(IteratorT<b> it)
     {
         auto ptr = it.node();
         ptr->next = ptr->next->next;
         return ++it;
     }
 
-    inline void pushFront(const T& value) noexcept
+    void pushFront(const T& value) noexcept
     {
         auto next = std::make_shared<Node>(value, head);
         head = next;
     }
 
-    inline void pushFront(T&& value) noexcept
+    void pushFront(T&& value) noexcept
     {
         auto next = std::make_shared<Node>(std::move(value), head);
         head = next;
     }
 
-    inline void popFront()
+    void popFront()
     {
         head = head->next;
     }
@@ -210,7 +210,7 @@ bool operator==(const SmartPtrLinkedList<T>& lhs, const SmartPtrLinkedList<T>& r
 };
 
 template<typename T>
-inline bool operator!=(const SmartPtrLinkedList<T>& lhs, const SmartPtrLinkedList<T>& rhs) noexcept
+bool operator!=(const SmartPtrLinkedList<T>& lhs, const SmartPtrLinkedList<T>& rhs) noexcept
 {
     return !(lhs == rhs);
 };
