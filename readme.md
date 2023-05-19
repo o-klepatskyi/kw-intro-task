@@ -7,6 +7,6 @@
 - [x] Moving to modern c++
 - [x] Smart pointers
 - [x] Rvalue References, Move Semantics, and Perfect Forwarding
-- [ ] Lambda expressions
+- [x] Lambda expressions
 - [ ] The concurrency API
 - [ ] Tweaks
