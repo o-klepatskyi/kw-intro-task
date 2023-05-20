@@ -1,5 +1,6 @@
 #pragma once
 #include <concepts>
+#include <memory>
 
 template<typename... Args, std::invocable<Args...> Func>
 constexpr decltype(auto) caller(Func f, Args&&... args) noexcept(std::is_nothrow_invocable<Func, Args...>)
