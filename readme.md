@@ -9,7 +9,7 @@
 - - [x] Pimpl Idiom
 - [x] Rvalue References, Move Semantics, and Perfect Forwarding
 - [x] Lambda expressions
-- [ ] The concurrency API
-- - [ ] composable futures
-- - [ ] coroutines
-- [ ] Tweaks
+- [x] The concurrency API
+- - [ ] composable futures (**???**)
+- - [ ] coroutines (**in progress**)
+- [x] Tweaks
