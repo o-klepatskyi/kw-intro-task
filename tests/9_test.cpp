@@ -1,6 +1,7 @@
 #include "9_coroutines.h"
 #include "gtest/gtest.h"
 #include "MemoryLeakDetector.h"
+#include <sstream>
 
 TEST(Coroutines, InititalSuspendNeverStartsCoroutine)
 {
@@ -55,4 +56,23 @@ TEST(Coroutines, WhenPassedSecondTimeNothingIsPrinted)
     c1.provide("this will not be printed because coroutine is done!");
     auto output = testing::internal::GetCapturedStdout();
     EXPECT_STREQ(printedString, output.c_str());
+}
+
+TEST(Coroutines, CorrectlyYieldsValueFromStream)
+{
+    MemoryLeakDetector d;
+    std::istringstream stream;
+    std::string first = "first";
+    std::string second = "second";
+    std::string third = " third ";
+    std::string input { first + "\n" + second + "\n" + third };
+    stream.str(input);
+
+    auto rStream = readStream(stream);
+    auto firstInput  = rStream.readLine();
+    EXPECT_STREQ(first.c_str(), firstInput.c_str());
+    auto secondInput = rStream.readLine();
+    EXPECT_STREQ(second.c_str(), secondInput.c_str());
+    auto thirdInput  = rStream.readLine();
+    EXPECT_STREQ(third.c_str(), thirdInput.c_str());
 }
