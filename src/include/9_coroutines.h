@@ -1,6 +1,9 @@
+#include "Generator.h"
+
 #include <coroutine>
 #include <iostream>
 #include <string>
+#include <concepts>
 
 static const char* const EMPTY = ""; 
 
@@ -133,56 +136,7 @@ PrintMyString printMyStringOnce()
 
 // =======================================================================
 
-struct ReadStream
-{
-    struct promise_type;
-    using Handle = std::coroutine_handle<promise_type>;
-
-    Handle handle;
-
-    struct promise_type
-    {
-        std::string output;
-
-        ReadStream get_return_object() noexcept
-        {
-            return { Handle::from_promise(*this) };
-        }
-
-        std::suspend_always initial_suspend() noexcept { return {}; };
-        void unhandled_exception() { throw; }
-        std::suspend_never final_suspend() noexcept { return {}; }
-
-        std::suspend_always yield_value(std::string s) noexcept
-        {
-            output = std::move(s);
-            return {};
-        }
-
-        void return_void() noexcept {}
-    };
-
-    ReadStream(Handle h) noexcept : handle {h} {}
-
-    ~ReadStream()
-    {
-        if (handle)
-        {
-            handle.destroy();
-        }
-    }
-
-    std::string readLine() 
-    {
-        if (not handle.done())
-        {
-            handle.resume();
-        }
-        return std::move(handle.promise().output);
-    }
-};
-
-ReadStream readStream(std::istream& is)
+Generator<std::string> readStream(std::istream& is)
 {
     std::string input;
     while(true)
@@ -191,3 +145,15 @@ ReadStream readStream(std::istream& is)
         co_yield input;
     }
 }
+
+// =======================================================================
+
+template<std::integral T>
+Generator<T> range(T start = 0, const T endInclusive = 0, const T step = 1) noexcept
+{
+    while (start <= endInclusive)
+    {
+        co_yield start;
+        start += step;
+    }
+};

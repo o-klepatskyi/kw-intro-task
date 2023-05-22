@@ -68,11 +68,50 @@ TEST(Coroutines, CorrectlyYieldsValueFromStream)
     std::string input { first + "\n" + second + "\n" + third };
     stream.str(input);
 
-    auto rStream = readStream(stream);
-    auto firstInput  = rStream.readLine();
+    auto streamGen = readStream(stream);
+    streamGen.next();
+    auto firstInput  = streamGen.value();
     EXPECT_STREQ(first.c_str(), firstInput.c_str());
-    auto secondInput = rStream.readLine();
+    streamGen.next();
+    auto secondInput = streamGen.value();
     EXPECT_STREQ(second.c_str(), secondInput.c_str());
-    auto thirdInput  = rStream.readLine();
+    streamGen.next();
+    auto thirdInput  = streamGen.value();
     EXPECT_STREQ(third.c_str(), thirdInput.c_str());
+}
+
+TEST(Coroutines, GeneratesOneZeroWithAllDefaultParams)
+{
+    auto gen = range<int>();
+    std::vector<int> res;
+    while(gen.next())
+    {
+        res.emplace_back(gen.value());
+    }
+    EXPECT_EQ(std::vector {0}, res);
+}
+
+TEST(Coroutines, GeneratesPositiveNumbersStartingFromOne)
+{
+    auto start = 1;
+    auto end = 1'000'000;
+    auto gen = range<int>(start, end);
+    for(int i = start; i <= end; i++)
+    {
+        ASSERT_TRUE(gen.next());
+        ASSERT_EQ(gen.value(), i);
+    }
+}
+
+TEST(Coroutines, GeneratorStepsCorrectly)
+{
+    auto start = 1;
+    auto end = 100;
+    auto step = 7;
+    auto gen = range<int>(start, end, step);
+    for(int i = start; i <= end; i += step)
+    {
+        ASSERT_TRUE(gen.next());
+        ASSERT_EQ(gen.value(), i);
+    }
 }
