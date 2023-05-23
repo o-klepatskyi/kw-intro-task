@@ -1,8 +1,9 @@
 #pragma once
-#include "util.h"
+
 #include <memory>
 #include <stdexcept>
 #include <initializer_list>
+#include <type_traits>
 
 template<typename T>
 class SmartPtrLinkedList
@@ -107,7 +108,7 @@ public:
         IteratorT(const IteratorT& other) noexcept : ptr {other.ptr} {}
         IteratorT(IteratorT&& other) noexcept : ptr {std::move(other.ptr)} {}
 
-        using DereferenceType = Select<const T&, T&, constiter>;
+        using DereferenceType = std::conditional<constiter, const T&, T&>;
 
         T& operator*() const
         {
@@ -234,5 +235,3 @@ public:
     void remove(int i);
     int size() const noexcept;
 };
-
-// std::ostream& operator<<(std::ostream& os, const MyCollection& collection);

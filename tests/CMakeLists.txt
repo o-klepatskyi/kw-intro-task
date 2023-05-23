@@ -1,5 +1,5 @@
 include(FetchContent)
-
+add_definitions(-DLOG_LEVEL=0)
 FetchContent_Declare(
   googletest
   GIT_REPOSITORY https://github.com/google/googletest.git

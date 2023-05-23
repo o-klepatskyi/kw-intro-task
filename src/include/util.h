@@ -1,16 +1,7 @@
 #pragma once
+#include <string>
 
-template<typename T, typename U, bool b>
-struct SelectT
+constexpr std::string getProjectPath() noexcept
 {
-    using value = T;
-};
-
-template<typename T, typename U>
-struct SelectT<T, U, false>
-{
-    using value = U;
-};
-
-template<typename T, typename U, bool b>
-using Select = SelectT<T, U, b>::value;
+    return PROJECT_PATH;
+}

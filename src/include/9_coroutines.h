@@ -1,6 +1,6 @@
 #include "Generator.h"
-#include "task.h"
-#include "sync_wait_task.h"
+#include "Task.h"
+#include "SyncWaitTask.h"
 
 #include <coroutine>
 #include <iostream>
