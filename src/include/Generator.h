@@ -62,6 +62,10 @@ struct Generator<T>::promise_type
         return {};
     }
 
+    // prohibit using co_await inside generator coroutines
+    template<typename U>
+    std::suspend_never await_transform(U&&) = delete;
+
     void unhandled_exception() noexcept
     {
         std::terminate();

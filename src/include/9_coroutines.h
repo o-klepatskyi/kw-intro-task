@@ -1,9 +1,12 @@
 #include "Generator.h"
+#include "task.h"
+#include "sync_wait_task.h"
 
 #include <coroutine>
 #include <iostream>
 #include <string>
 #include <concepts>
+#include <exception>
 
 static const char* const EMPTY = ""; 
 
@@ -156,4 +159,20 @@ Generator<T> range(T start = 0, const T endInclusive = 0, const T step = 1) noex
         co_yield start;
         start += step;
     }
-};
+}
+
+// =======================================================================
+
+Task<> completes_synchronously() {
+    co_return;
+}
+
+Task<> loop_synchronously(int count) {
+    std::cout << "loop_synchronously(" << count << ")" << std::endl;
+    for (int i = 0; i < count; ++i) {
+        co_await completes_synchronously();
+    }
+    std::cout << "loop_synchronously(" << count << ") returning" << std::endl;
+}
+
+struct my_exception : public std::exception {};
