@@ -2,8 +2,8 @@
 #include "FtpExampleSync.h"
 #include "FtpExampleAsync.h"
 #include "FtpExampleCoro.h"
-#include "SyncWaitTask.h"
-#include <future_coro.h>
+#include "future_coro.h"
+
 #include <thread>
 #include <stdexcept>
 
@@ -44,25 +44,24 @@ void useAsync(const std::string& path, const std::string& pattern)
     }
 }
 
-void useCoro(const std::string& path, const std::string& pattern)
+std::future<void> useCoro(const std::string& path, const std::string& pattern) noexcept
 {
     LogInfo("======== Using coroutines");
+    LogInfo("Current thread ID: %llu", std::this_thread::get_id());
     try
     {
 	    kw::FTPExampleCoro ftp;
-	    auto fileTask = ftp.downloadFirstMatch(path,
+	    auto file = co_await ftp.downloadFirstMatch(path,
 			[&pattern](std::string_view f) { return f.ends_with(pattern); },
 	        [](int progress) { LogInfo("Download: %d%%", progress); });
-        auto waitTask = startTaskAsync(std::move(fileTask));
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
-        LogInfo("Doing my job...");
-        std::string file = waitTask.get().result();
+        
         LogInfo("downloadFirstMatch success: %s", file.c_str());
     }
     catch (const std::exception& e)
     {
         LogError("downloadFirstMatch failed: %s", e.what());
     }
+    co_return;
 }
 
 std::future<int> coro1(int x)
@@ -114,30 +113,34 @@ int main(int, char**)
 {
     const std::string path = getProjectPath() + "/src/include";
     const std::string pattern = ".h";
+
+    useCoro(path, pattern).wait();
+    
     // useSync(path, pattern);
     // useAsync(path, pattern);
     // useCoro(path, pattern);
 
-    LogInfo("Main thread ID: %llu", std::this_thread::get_id());
-    auto f = coro2();
-    LogInfo("%u", f.get());
-    auto f2 = throws();
-    try
-    {
-        f2.get();
-    }
-    catch(...)
-    {
-        LogError("Cathed error!");
-    }
-    try
-    {
-        LogInfo("%u", usingLambdaThrows().get());
-    }
-    catch(...)
-    {
-        LogError("Cathed error!");
-    }
+    // LogInfo("Main thread ID: %llu", std::this_thread::get_id());
+    // auto f = coro2();
+    // LogInfo("%u", f.get());
+    // auto f2 = throws();
+    // try
+    // {
+    //     f2.get();
+    // }
+    // catch(...)
+    // {
+    //     LogError("Cathed error!");
+    // }
+    // try
+    // {
+    //     LogInfo("%u", usingLambdaThrows().get());
+    // }
+    // catch(...)
+    // {
+    //     LogError("Cathed error!");
+    // }
+
     
     return 0;
 }

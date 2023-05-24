@@ -1,6 +1,6 @@
 #include "log.h"
 #include "RemoteDirEntry.h"
-#include "Task.h"
+#include "future_coro.h"
 #include <vector>
 #include <string>
 #include <string_view>
@@ -40,30 +40,22 @@ namespace kw
          * 
          * TODO: return an async object instead of blocking here
          */
-        Task<std::string> downloadFirstMatch(const std::string& remotePath, 
+        std::future<std::string> downloadFirstMatch(const std::string& remotePath, 
                                        std::function<bool(std::string_view)> predicate,
                                        std::function<void(int)> onProgress)
         {
-            // Step 1. Get list of files. TODO: make async
+            LogInfo("Current thread ID on start: %llu", std::this_thread::get_id());
             auto files = co_await listFiles(remotePath);
-
-            // Step 2. Find the first matching file. TODO: make async
-            RemoteDirEntry match = co_await findMatchingFile(files, std::move(predicate));
-
-            // Step 3. Download the file. TODO: make async
-            std::string tempPath = co_await downloadFile(match, std::move(onProgress));
-
-            co_return tempPath;
+            auto match = co_await findMatchingFile(files, std::move(predicate));
+            co_return co_await downloadFile(match, std::move(onProgress));
         }
 
     private:
 
-        Task<std::vector<RemoteDirEntry>> listFiles(const std::string& remotePath)
+        std::future<std::vector<RemoteDirEntry>> listFiles(const std::string& remotePath)
         {
+            LogInfo("listFiles: Current thread ID: %llu", std::this_thread::get_id());
             LogInfo("LIST %s", remotePath.c_str());
-
-            LogInfo("Latency...");
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             
             if (!fs::exists(remotePath)) // failures are handled by exceptions
                 throw std::runtime_error{"FTP remote path does not exist: " + remotePath};
@@ -82,18 +74,20 @@ namespace kw
             co_return list;
         }
 
-        static Task<RemoteDirEntry> findMatchingFile(const std::vector<RemoteDirEntry>& list,
+        static std::future<RemoteDirEntry> findMatchingFile(const std::vector<RemoteDirEntry>& list,
                                                std::function<bool(std::string_view)> predicate)
         {
+            LogInfo("findMatchingFile: Current thread ID: %llu", std::this_thread::get_id());
             for (auto& e : list)
                 if (e.isFile && predicate(e.remotePath))
                     co_return e;
             throw std::runtime_error{"FTP no files matched the search pattern"};
         }
 
-        Task<std::string> downloadFile(const RemoteDirEntry& remoteFile,
+        std::future<std::string> downloadFile(const RemoteDirEntry& remoteFile,
                                  std::function<void(int)> onProgress)
         {
+            LogInfo("downloadFile: Current thread ID: %llu", std::this_thread::get_id());
             LogInfo("DOWNLOAD %s (%zu KB)", remoteFile.path(), remoteFile.size / 1024);
             if (!remoteFile.isFile)
                 throw std::runtime_error{"FTP download failed, not a file: " + remoteFile.remotePath};

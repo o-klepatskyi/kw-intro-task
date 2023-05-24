@@ -4,6 +4,7 @@
 #include <future>
 #include <exception> // std::current_exception
 #include <memory>
+#include <cassert>
 
 /**
  * Enable the use of rpp::cfuture<T> as a coroutine type
