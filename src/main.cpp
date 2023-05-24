@@ -51,10 +51,10 @@ void useCoro(const std::string& path, const std::string& pattern)
 	    auto fileTask = ftp.downloadFirstMatch(path,
 			[&pattern](std::string_view f) { return f.ends_with(pattern); },
 	        [](int progress) { LogInfo("Download: %d%%", progress); });
-        auto waitTask = startTask(std::move(fileTask));
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        auto waitTask = startTaskAsync(std::move(fileTask));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
         LogInfo("Doing my job...");
-        std::string file = waitTask.result();
+        std::string file = waitTask.get().result();
         LogInfo("downloadFirstMatch success: %s", file.c_str());
     }
     catch (const std::exception& e)

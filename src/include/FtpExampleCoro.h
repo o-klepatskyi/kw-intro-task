@@ -62,6 +62,9 @@ namespace kw
         {
             LogInfo("LIST %s", remotePath.c_str());
 
+            LogInfo("Latency...");
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            
             if (!fs::exists(remotePath)) // failures are handled by exceptions
                 throw std::runtime_error{"FTP remote path does not exist: " + remotePath};
 

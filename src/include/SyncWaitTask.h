@@ -4,6 +4,7 @@
 #include <coroutine>
 #include <utility>
 #include <type_traits>
+#include <future>
 
 template<typename T>
 class SyncWaitTask;
@@ -136,4 +137,12 @@ template<>
 SyncWaitTask<void> startTask(Task<void>&& t)
 {
     co_await std::move(t);
+}
+
+template<typename T>
+std::future<SyncWaitTask<T>> startTaskAsync(Task<T>&& t)
+{
+    return std::async(std::launch::async, [&t]() {
+        return startTask(std::move(t));
+    });
 }
