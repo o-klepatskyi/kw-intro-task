@@ -139,18 +139,18 @@ namespace kw
     };
 }
 
-
-
 int main(int, char**)
 {
 	// usage example, errors must be handled
     // the actual work should be done in a background thread
     // UI holds something equivalent to a future<string> to get the final result
+
+    std::string path = getProjectPath() + "/src/include";
     try
     {
 	    kw::FakeAsyncFTPExample ftp;
-	    std::string file = ftp.downloadFirstMatch("/Projects",
-			[](std::string_view f) { return f.ends_with(".txt"); },
+	    std::string file = ftp.downloadFirstMatch(path,
+			[](std::string_view f) { return f.ends_with(".h"); },
 	        [](int progress) { LogInfo("Download: %d%%", progress); });
         LogInfo("downloadFirstMatch success: %s", file.c_str());
     }
@@ -158,6 +158,6 @@ int main(int, char**)
     {
         LogError("downloadFirstMatch failed: %s", e.what());
     }
-    LogInfo("%s", getProjectPath().c_str());
+    
     return 0;
 }
