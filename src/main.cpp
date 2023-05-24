@@ -87,6 +87,29 @@ std::future<void> throws()
     co_return;
 }
 
+std::future<int> usingLambda()
+{
+    LogInfo("Current thread ID on start: %llu", std::this_thread::get_id());
+    int x = co_await [] {
+        LogInfo("Current thread ID on start: %llu", std::this_thread::get_id());
+        return 5;
+    };
+    LogInfo("Current thread ID after co_await: %llu", std::this_thread::get_id());
+    co_return x * 2;
+}
+
+std::future<int> usingLambdaThrows()
+{
+    LogInfo("Current thread ID on start: %llu", std::this_thread::get_id());
+    int x = co_await [] () -> std::future<int> {
+        LogInfo("Current thread ID on start in lambda: %llu", std::this_thread::get_id());
+        throw std::exception {};
+        co_return 5;
+    }();
+    LogInfo("Current thread ID after co_await: %llu", std::this_thread::get_id());
+    co_return x * 2;
+}
+
 int main(int, char**)
 {
     const std::string path = getProjectPath() + "/src/include";
@@ -102,6 +125,14 @@ int main(int, char**)
     try
     {
         f2.get();
+    }
+    catch(...)
+    {
+        LogError("Cathed error!");
+    }
+    try
+    {
+        LogInfo("%u", usingLambdaThrows().get());
     }
     catch(...)
     {
